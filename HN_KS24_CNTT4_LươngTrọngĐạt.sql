@@ -56,41 +56,27 @@ INSERT INTO bookings (guest_id, room_id, check_in, check_out) VALUES
 (4, 1, '2024-06-10', '2024-06-11'); -- 1 ngày
 -- TRUY VẤN DỮ LIỆU CƠ BẢN
 -- Liệt kê tên khách và số điện thoại của tất cả khách hàng
-SELECT 
-    guest_name, phone
-FROM
-    guests;
+SELECT guest_name, phone
+FROM guests;
 -- Liệt kê các loại phòng khác nhau trong khách sạn
-SELECT 
-    room_type
-FROM
-    rooms
+SELECT room_type
+FROM rooms
 GROUP BY room_type;
 -- Hiển thị loại phòng và giá thuê theo ngày, sắp xếp theo giá tăng dần
-SELECT 
-    *
-FROM
-    rooms
+SELECT *
+FROM rooms
 ORDER BY price_per_day;
 -- Hiển thị các phòng có giá thuê lớn hơn 1.000.000
-SELECT 
-    *
-FROM
-    rooms
-WHERE
-    price_per_day > 1000000;
+SELECT *
+FROM rooms
+WHERE price_per_day > 1000000;
 -- Liệt kê các lần đặt phòng diễn ra trong năm 2024
-SELECT 
-    *
-FROM
-    bookings
-WHERE
-    check_in >= '2024-01-01';
+SELECT *
+FROM bookings
+WHERE check_in >= '2024-01-01';
 -- Cho biết số lượng phòng của từng loại phòng
-SELECT 
-    room_type, COUNT(room_type) AS count_room
-FROM
-    rooms
+SELECT room_type, COUNT(room_type) AS count_room
+FROM rooms
 GROUP BY room_type;
 -- TRUY VẤN NÂNG CAO
 /*
@@ -99,48 +85,32 @@ GROUP BY room_type;
 ○	Loại phòng đã đặt
 ○	Ngày nhận phòng (check_in)
 */
-SELECT 
-    q.guest_name, r.room_type, b.check_in
-FROM
-    bookings b
-        JOIN
-    guests q ON b.guest_id = q.guest_id
-        JOIN
-    rooms r ON b.room_id = r.room_id;
+SELECT q.guest_name, r.room_type, b.check_in
+FROM bookings b
+JOIN guests q ON b.guest_id = q.guest_id
+JOIN rooms r ON b.room_id = r.room_id;
 -- Cho biết mỗi khách đã đặt phòng bao nhiêu lần
-SELECT 
-    q.guest_name, COUNT(b.booking_id) AS count_time
-FROM
-    guests q
-        LEFT JOIN
-    bookings b ON b.guest_id = q.guest_id
+SELECT q.guest_name, COUNT(b.booking_id) AS count_time
+FROM guests q
+LEFT JOIN bookings b ON b.guest_id = q.guest_id
 GROUP BY q.guest_id;
 -- Tính doanh thu của mỗi phòng, với công thức: “Doanh thu = số ngày ở × giá thuê theo ngày”
-SELECT 
-    room_id,
-    SUM(DATEDIFF(check_out, check_in) * price_per_day) AS doanh_thu
+SELECT room_id, SUM(DATEDIFF(check_out, check_in) * price_per_day) AS doanh_thu
 FROM bookings
 JOIN rooms USING (room_id)
 GROUP BY room_id;
 -- Hiển thị tổng doanh thu của từng loại phòng
-SELECT 
-    room_type,
-    SUM(DATEDIFF(check_out, check_in) * price_per_day) AS tong_doanh_thu
+SELECT room_type, SUM(DATEDIFF(check_out, check_in) * price_per_day) AS tong_doanh_thu
 FROM bookings
 JOIN rooms USING (room_id)
 GROUP BY room_type;
 -- Tìm những khách đã đặt phòng từ 2 lần trở lên
-SELECT 
-    q.guest_name, COUNT(b.booking_id) AS count_time
-FROM
-    guests q
-        LEFT JOIN
-    bookings b ON b.guest_id = q.guest_id
+SELECT q.guest_name, COUNT(b.booking_id) AS count_time
+FROM guests q
+LEFT JOIN bookings b ON b.guest_id = q.guest_id
 GROUP BY q.guest_id having count_time>=2;
 -- Tìm loại phòng có số lượt đặt phòng nhiều nhất
-SELECT 
-    room_type,
-    COUNT(*) AS so_luot_dat
+SELECT room_type, COUNT(*) AS so_luot_dat
 FROM bookings
 JOIN rooms USING (room_id)
 GROUP BY room_type
